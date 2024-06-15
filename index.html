@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TACOS D' PERRO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .main-title {
+            background-color: orange;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            font-size: 36px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ff8c00;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: orange;
+            margin-top: 20px;
+        }
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .product img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .product-details {
+            flex: 1;
+            margin-left: 10px;
+        }
+        .product-details h3 {
+            margin: 0;
+            color: orange;
+        }
+        .product-price {
+            font-weight: bold;
+        }
+        .add-to-cart {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .add-to-cart:hover {
+            background-color: #ff8c00;
+        }
+        .cart {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-controls button {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .quantity-controls button:hover {
+            background-color: #ff8c00;
+        }
+    </style>
+    <script>
+        let cart = {};
+
+        function addToCart(product) {
+            if (!cart[product.name]) {
+                cart[product.name] = { ...product, quantity: 0 };
+            }
+            cart[product.name].quantity++;
+            renderCart();
+        }
+
+        function updateQuantity(productName, quantity) {
+            if (cart[productName]) {
+                cart[productName].quantity += quantity;
+                if (cart[productName].quantity <= 0) {
+                    delete cart[productName];
+                }
+                renderCart();
+            }
+        }
+
+        function renderCart() {
+            const cartContainer = document.getElementById('cart');
+            cartContainer.innerHTML = '';
+            let total = 0;
+
+            Object.values(cart).forEach(product => {
+                total += product.price * product.quantity;
+                const productElement = document.createElement('div');
+                productElement.classList.add('product');
+                productElement.innerHTML = `
+                    <div class="product-details">
+                        <h3>${product.name}</h3>
+                        <div class="quantity-controls">
+                            <button onclick="updateQuantity('${product.name}', -1)">-</button>
+                            <span>${product.quantity}</span>
+                            <button onclick="updateQuantity('${product.name}', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="product-price">$${(product.price * product.quantity).toFixed(2)}</div>
+                `;
+                cartContainer.appendChild(productElement);
+            });
+
+            document.getElementById('total').innerText = `Total: $${total.toFixed(2)}`;
+        }
+
+        function confirmOrder() {
+            const total = Object.values(cart).reduce((sum, product) => sum + (product.price * product.quantity), 0);
+            if (total > 0) {
+                if (confirm(`El total de su compra es $${total.toFixed(2)}`)) {
+                    alert('Su pedido llegará aproximadamente en 18 minutos');
+                    cart = {};
+                    renderCart();
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="main-title">Tacos D' Perro</div>
+
+    <div>
+        <h2 class="section-title">TACOS</h2>
+        <div class="product">
+            <img src="1.jpg" alt="Taco de Bistec">
+            <div class="product-details">
+                <h3>Taco de Bistec</h3>
+                <div>$10.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Taco de Bistec', price: 10.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="2.jpg" alt="Taco de Pastor">
+            <div class="product-details">
+                <h3>Taco de Pastor</h3>
+                <div>$10.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Taco de Pastor', price: 10.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="3.jpg" alt="Taco de Chorizo">
+            <div class="product-details">
+                <h3>Taco de Chorizo</h3>
+                <div>$10.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Taco de Chorizo', price: 10.00 })">Agregar</button>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="section-title">QUESADILLAS</h2>
+        <div class="product">
+            <img src="4.jpg" alt="Quesadilla de Bistec">
+            <div class="product-details">
+                <h3>Quesadilla de Bistec</h3>
+                <div>$22.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Quesadilla de Bistec', price: 22.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="5.jpg" alt="Quesadilla de Pastor">
+            <div class="product-details">
+                <h3>Quesadilla de Pastor</h3>
+                <div>$22.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Quesadilla de Pastor', price: 22.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="6.jpg" alt="Quesadilla de Chorizo">
+            <div class="product-details">
+                <h3>Quesadilla de Chorizo</h3>
+                <div>$22.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Quesadilla de Chorizo', price: 22.00 })">Agregar</button>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="section-title">BEBIDAS</h2>
+        <div class="product">
+            <img src="7.jpg" alt="Agua de Jamaica">
+            <div class="product-details">
+                <h3>Agua de Jamaica</h3>
+                <div>$15.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Agua de Jamaica', price: 15.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="8.jpg" alt="Agua de Horchata">
+            <div class="product-details">
+                <h3>Agua de Horchata</h3>
+                <div>$15.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Agua de Horchata', price: 15.00 })">Agregar</button>
+        </div>
+        <div class="product">
+            <img src="9.jpg" alt="Coca Cola">
+            <div class="product-details">
+                <h3>Coca Cola</h3>
+                <div>$18.00</div>
+            </div>
+            <button class="add-to-cart" onclick="addToCart({ name: 'Coca Cola', price: 18.00 })">Agregar</button>
+        </div>
+    </div>
+
+    <div class="cart">
+        <h2>Carrito</h2>
+        <div id="cart"></div>
+        <div class="total" id="total">Total: $0.00</div>
+        <button onclick="confirmOrder()">Confirmar Pedido</button>
+    </div>
+</body>
+</html>
